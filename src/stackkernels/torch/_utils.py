@@ -1,0 +1,2 @@
+"""contiguity checks, reshape helpers"""
+
