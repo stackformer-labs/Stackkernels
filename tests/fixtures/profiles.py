@@ -38,6 +38,24 @@ A100_PROFILE = DeviceProfile(
     has_bf16=True,
 )
 
+A100_80GB_PROFILE = DeviceProfile(
+    name="NVIDIA A100-SXM4-80GB",
+    compute_capability=(8, 0),
+    sm_count=108,
+    warp_size=32,
+    max_regs_per_sm=65536,
+    max_regs_per_thread=255,
+    max_threads_per_sm=2048,
+    max_smem_per_block=167936,
+    max_smem_per_sm=167936,
+    l2_bytes=40 * 1024 * 1024,
+    total_memory_bytes=80 * 1024 * 1024 * 1024,
+    peak_bandwidth_gbps=2039.0,
+    peak_tflops={"fp16": 312.0, "bf16": 312.0, "fp32": 19.5},
+    has_cp_async=True,
+    has_bf16=True,
+)
+
 H100_PROFILE = DeviceProfile(
     name="NVIDIA H100 80GB HBM3",
     compute_capability=(9, 0),
@@ -74,4 +92,4 @@ CPU_PROFILE = DeviceProfile(
     has_bf16=False,
 )
 
-__all__ = ["T4_PROFILE", "A100_PROFILE", "H100_PROFILE", "CPU_PROFILE"]
+__all__ = ["T4_PROFILE", "A100_PROFILE", "A100_80GB_PROFILE", "H100_PROFILE", "CPU_PROFILE"]

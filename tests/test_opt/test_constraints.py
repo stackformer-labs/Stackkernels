@@ -47,3 +47,24 @@ def test_absurdly_large_tile_vs_problem_rejected():
     # problem row size is 64, 4096 is 64x larger (>8x)
     rejections = check(cfg, T4_PROFILE, kernel_class="row", problem=64)
     assert any("absurdly larger" in r for r in rejections)
+
+
+def test_accumulator_register_budget_rejected():
+    # 128x128 tile with 2 warps = 16384 / 64 = 256 regs/thread > 114 max budget
+    cfg = {"BLOCK_M": 128, "BLOCK_N": 128, "num_warps": 2, "num_stages": 2}
+    rejections = check(cfg, A100_PROFILE, kernel_class="tiled", dtype="float16")
+    assert any("Accumulator registers" in r for r in rejections)
+
+
+def test_stages_depth_on_sm80_rejected():
+    # num_stages > 4 on Ampere (sm80) is rejected
+    cfg = {"BLOCK_M": 64, "BLOCK_N": 64, "num_warps": 4, "num_stages": 5}
+    rejections = check(cfg, A100_PROFILE, kernel_class="tiled", dtype="float16")
+    assert any("pipeline depth limit" in r for r in rejections)
+
+
+def test_max_row_limit_rejected():
+    # BLOCK_SIZE > 16384 is rejected
+    cfg = {"BLOCK_SIZE": 32768, "num_warps": 4}
+    rejections = check(cfg, T4_PROFILE, kernel_class="row")
+    assert any("exceeds maximum row limit" in r for r in rejections)

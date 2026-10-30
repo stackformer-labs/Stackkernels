@@ -7,6 +7,7 @@ from stackkernels._opt.hardware import (
     get_hardware_info,
 )
 from tests.fixtures.profiles import (
+    A100_80GB_PROFILE,
     A100_PROFILE,
     CPU_PROFILE,
     H100_PROFILE,
@@ -24,6 +25,10 @@ def test_device_profile_fields():
     assert A100_PROFILE.compute_capability == (8, 0)
     assert A100_PROFILE.has_cp_async is True
     assert A100_PROFILE.has_bf16 is True
+
+    assert A100_80GB_PROFILE.compute_capability == (8, 0)
+    assert A100_80GB_PROFILE.has_cp_async is True
+    assert A100_80GB_PROFILE.total_memory_bytes == 80 * 1024 * 1024 * 1024
 
     assert H100_PROFILE.compute_capability == (9, 0)
     assert H100_PROFILE.has_cp_async is True
