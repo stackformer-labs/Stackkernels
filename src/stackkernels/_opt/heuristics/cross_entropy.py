@@ -1,22 +1,17 @@
-"""heuristic for cross entropy loss"""
+"""Heuristic configuration for Cross Entropy Loss."""
 
-from stackkernels._opt.heuristics._util import determine_num_warps, next_pow2
+from typing import Any
+
+from stackkernels._opt.classes.row import seed_configs
+from stackkernels._opt.hardware import DeviceProfile, get_device_profile
 
 
-def heuristic(shape: int | tuple | None = None, **kwargs) -> dict:
+def heuristic(shape: Any = None, profile: DeviceProfile | None = None, dtype: str = "float16", **kwargs: Any) -> dict[str, Any]:
     """Determine optimal block size and warps for Cross Entropy."""
-    vocab_size = kwargs.get("vocab_size")
-    if vocab_size is None:
-        if isinstance(shape, (list, tuple)):
-            vocab_size = shape[-1]
-        elif isinstance(shape, int):
-            vocab_size = shape
-        else:
-            vocab_size = 32000
+    prof = profile or get_device_profile()
+    cfg = dict(seed_configs(prof, problem=shape, dtype=dtype, **kwargs)[0])
+    cfg["BLOCK_V"] = cfg["BLOCK_SIZE"]
+    return cfg
 
-    block_size = min(max(next_pow2(vocab_size), 64), 8192)
-    return {
-        "BLOCK_SIZE": block_size,
-        "num_warps": determine_num_warps(block_size),
-    }
 
+__all__ = ["heuristic"]

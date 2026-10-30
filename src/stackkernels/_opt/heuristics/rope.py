@@ -1,22 +1,17 @@
-"""heuristic for rotary position embedding (RoPE)"""
+"""Heuristic configuration for Rotary Position Embedding (RoPE)."""
 
-from stackkernels._opt.heuristics._util import determine_num_warps, next_pow2
+from typing import Any
+
+from stackkernels._opt.classes.row import seed_configs
+from stackkernels._opt.hardware import DeviceProfile, get_device_profile
 
 
-def heuristic(shape: int | tuple | None = None, **kwargs) -> dict:
+def heuristic(shape: Any = None, profile: DeviceProfile | None = None, dtype: str = "float16", **kwargs: Any) -> dict[str, Any]:
     """Determine optimal block size and warps for RoPE."""
-    head_dim = kwargs.get("head_dim")
-    if head_dim is None:
-        if isinstance(shape, (list, tuple)):
-            head_dim = shape[-1]
-        elif isinstance(shape, int):
-            head_dim = shape
-        else:
-            head_dim = 128
+    prof = profile or get_device_profile()
+    cfg = dict(seed_configs(prof, problem=shape, dtype=dtype, **kwargs)[0])
+    cfg["BLOCK_D_HALF"] = max(16, cfg["BLOCK_SIZE"] // 2)
+    return cfg
 
-    block_size = max(next_pow2(head_dim), 32)
-    return {
-        "BLOCK_SIZE": block_size,
-        "num_warps": 4,
-    }
 
+__all__ = ["heuristic"]

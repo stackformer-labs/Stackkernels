@@ -1,22 +1,15 @@
-"""heuristic for gated linear units (swiglu, geglu, reglu)"""
+"""Heuristic configuration for Gated Linear Unit (GLU) kernels."""
 
-from stackkernels._opt.heuristics._util import determine_num_warps, next_pow2
+from typing import Any
+
+from stackkernels._opt.classes.elementwise import seed_configs
+from stackkernels._opt.hardware import DeviceProfile, get_device_profile
 
 
-def heuristic(shape: int | tuple | None = None, **kwargs) -> dict:
-    """Determine optimal block size and warps for GLU."""
-    n_cols = kwargs.get("n_cols")
-    if n_cols is None:
-        if isinstance(shape, (list, tuple)):
-            n_cols = shape[-1]
-        elif isinstance(shape, int):
-            n_cols = shape
-        else:
-            n_cols = 1024
+def heuristic(shape: Any = None, profile: DeviceProfile | None = None, dtype: str = "float16", **kwargs: Any) -> dict[str, Any]:
+    """Determine optimal block size and warps for GLU kernels."""
+    prof = profile or get_device_profile()
+    return dict(seed_configs(prof, problem=shape, dtype=dtype, **kwargs)[0])
 
-    block_size = min(max(next_pow2(n_cols), 64), 4096)
-    return {
-        "BLOCK_SIZE": block_size,
-        "num_warps": determine_num_warps(block_size),
-    }
 
+__all__ = ["heuristic"]

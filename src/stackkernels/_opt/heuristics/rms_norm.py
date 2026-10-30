@@ -1,21 +1,15 @@
-"""heuristic for rms_norm"""
+"""Heuristic configuration for RMSNorm."""
 
-from stackkernels._opt.heuristics._util import determine_num_warps, next_pow2
+from typing import Any
+
+from stackkernels._opt.classes.row import seed_configs
+from stackkernels._opt.hardware import DeviceProfile, get_device_profile
 
 
-def heuristic(shape: int | tuple | None = None, **kwargs) -> dict:
+def heuristic(shape: Any = None, profile: DeviceProfile | None = None, dtype: str = "float16", **kwargs: Any) -> dict[str, Any]:
     """Determine optimal block size and warps for RMSNorm."""
-    n_cols = kwargs.get("n_cols")
-    if n_cols is None:
-        if isinstance(shape, (list, tuple)):
-            n_cols = shape[-1]
-        elif isinstance(shape, int):
-            n_cols = shape
-        else:
-            n_cols = 1024
+    prof = profile or get_device_profile()
+    return dict(seed_configs(prof, problem=shape, dtype=dtype, **kwargs)[0])
 
-    block_size = next_pow2(n_cols)
-    return {
-        "BLOCK_SIZE": block_size,
-        "num_warps": determine_num_warps(block_size),
-    }
+
+__all__ = ["heuristic"]

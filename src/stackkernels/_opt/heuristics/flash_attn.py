@@ -1,26 +1,15 @@
-"""prefill and backward configs; returns kernel variant name"""
+"""Heuristic configuration for Flash Attention (prefill forward & backward)."""
 
 from typing import Any
 
+from stackkernels._opt.classes.tiled import seed_configs
+from stackkernels._opt.hardware import DeviceProfile, get_device_profile
 
-def heuristic(shape: Any = None, **kwargs) -> dict:
-    """Heuristic for Flash Attention (prefill & backward)."""
-    arch = str(kwargs.get("arch", "sm_80")).lower()
-    head_dim = kwargs.get("head_dim", 64)
 
-    if arch in ("sm_90", "sm_100"):
-        block_m, block_n = 128, 128
-        stages = 3
-    else:
-        block_m, block_n = 64, 64
-        stages = 2
+def heuristic(shape: Any = None, profile: DeviceProfile | None = None, dtype: str = "float16", **kwargs: Any) -> dict[str, Any]:
+    """Determine optimal block sizes, warps, and stages for Flash Attention."""
+    prof = profile or get_device_profile()
+    return dict(seed_configs(prof, problem=shape, dtype=dtype, **kwargs)[0])
 
-    num_warps = 4 if head_dim <= 64 else 8
 
-    return {
-        "BLOCK_M": block_m,
-        "BLOCK_N": block_n,
-        "num_warps": num_warps,
-        "num_stages": stages,
-        "kernel_variant": "flash_fwd",
-    }
+__all__ = ["heuristic"]

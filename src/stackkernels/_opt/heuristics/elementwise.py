@@ -1,13 +1,15 @@
-"""heuristic for elementwise activations"""
+"""Heuristic configuration for Elementwise activations."""
 
-from stackkernels._opt.heuristics._util import determine_num_warps, next_pow2
+from typing import Any
+
+from stackkernels._opt.classes.elementwise import seed_configs
+from stackkernels._opt.hardware import DeviceProfile, get_device_profile
 
 
-def heuristic(shape: int | tuple | None = None, **kwargs) -> dict:
-    """Determine optimal block size and warps for elementwise kernels."""
-    block_size = 1024
-    return {
-        "BLOCK_SIZE": block_size,
-        "num_warps": determine_num_warps(block_size),
-    }
+def heuristic(shape: Any = None, profile: DeviceProfile | None = None, dtype: str = "float16", **kwargs: Any) -> dict[str, Any]:
+    """Determine optimal block size and warps for elementwise activation kernels."""
+    prof = profile or get_device_profile()
+    return dict(seed_configs(prof, problem=shape, dtype=dtype, **kwargs)[0])
 
+
+__all__ = ["heuristic"]
