@@ -100,13 +100,17 @@ def check(
                 if isinstance(problem, int)
                 else (problem[-1] if isinstance(problem, (list, tuple)) and len(problem) > 0 else None)
             )
-            if row_size is not None and row_size >= 32 and block_size > 8 * row_size:
-                rejections.append(
-                    f"BLOCK_SIZE {block_size} is absurdly larger than row dimension {row_size} (>8x)"
-                )
+            if row_size is not None and row_size >= 32:
+                if block_size < row_size:
+                    rejections.append(
+                        f"BLOCK_SIZE {block_size} is smaller than row dimension {row_size}"
+                    )
+                elif block_size > 8 * row_size:
+                    rejections.append(
+                        f"BLOCK_SIZE {block_size} is absurdly larger than row dimension {row_size} (>8x)"
+                    )
 
     return rejections
 
 
 __all__ = ["check"]
-
