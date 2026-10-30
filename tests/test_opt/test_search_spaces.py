@@ -28,3 +28,4 @@ def test_tiled_search_space_filtered():
     for cand in candidates:
         rej = check(cand, T4_PROFILE, kernel_class="tiled", dtype="float16", problem={"head_dim": 64})
         assert rej == []
+

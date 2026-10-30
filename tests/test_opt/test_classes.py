@@ -44,3 +44,4 @@ def test_decode_seeds():
         # Long sequence: split > 1
         seeds_long = decode.seed_configs(prof, kv_len=4096)
         assert seeds_long[0]["SPLIT_KV"] >= 4
+

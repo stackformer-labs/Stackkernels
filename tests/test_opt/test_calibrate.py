@@ -19,3 +19,4 @@ def test_calibrate_device_cpu():
 
     peaks = measured_peaks(CPU_PROFILE)
     assert peaks["calibrated"] is True
+

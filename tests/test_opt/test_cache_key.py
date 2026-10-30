@@ -131,3 +131,4 @@ def test_serialization_6tuple():
     legacy_raw = "rms_norm:sm_80:float16:2048"
     legacy_deser = deserialize_key(legacy_raw)
     assert legacy_deser == ("rms_norm", "sm_80", "unknown", 1, "float16", "2048")
+

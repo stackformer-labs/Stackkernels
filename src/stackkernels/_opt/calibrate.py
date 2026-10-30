@@ -177,3 +177,4 @@ def calibrate_device(profile: DeviceProfile | None = None, force: bool = False) 
 
 
 __all__ = ["measured_peaks", "calibrate_device"]
+

@@ -79,3 +79,4 @@ def test_pick_explain_tiled_across_profiles():
         assert f"Device Profile: {prof.name}" in explanation
         assert f"SM Count: {prof.sm_count}" in explanation
         assert "Waves:" in explanation
+

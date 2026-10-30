@@ -58,3 +58,4 @@ def test_accumulator_regs_per_thread():
 def test_probe_none_kernel():
     res = probe(None)
     assert res is None
+
