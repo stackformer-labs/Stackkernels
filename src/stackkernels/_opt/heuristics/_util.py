@@ -1,10 +1,11 @@
-"""next_pow2, warp-count rules"""
+"""next_pow2, warp-count rules (pure Python)."""
 
-import triton
 
-next_pow2 = triton.next_power_of_2
-
-__all__ = ["next_pow2", "determine_num_warps", "get_num_warps"]
+def next_pow2(n: int) -> int:
+    """Return smallest power of 2 greater than or equal to n."""
+    if n <= 0:
+        return 1
+    return 1 << (n - 1).bit_length()
 
 
 def determine_num_warps(block_size: int, max_warps: int = 16) -> int:
@@ -17,3 +18,5 @@ def determine_num_warps(block_size: int, max_warps: int = 16) -> int:
 
 
 get_num_warps = determine_num_warps
+
+__all__ = ["next_pow2", "determine_num_warps", "get_num_warps"]
