@@ -11,6 +11,7 @@ from stackkernels._reference.jax.activation import (
     silu,
     swiglu,
 )
+from stackkernels._reference.jax.loss import cross_entropy, fused_linear_cross_entropy
 from stackkernels._reference.jax.norm import fused_add_norm, layer_norm, rms_norm
 from stackkernels._reference.jax.rope import apply_rope, precompute_freqs
 
@@ -29,4 +30,6 @@ __all__ = [
     "glu",
     "apply_rope",
     "precompute_freqs",
+    "cross_entropy",
+    "fused_linear_cross_entropy",
 ]

@@ -19,6 +19,14 @@ from stackkernels.torch.embedding import (
     apply_rope,
     precompute_freqs,
 )
+from stackkernels.torch.loss import (
+    CrossEntropyFunction,
+    CrossEntropyLoss,
+    FusedLinearCrossEntropyFunction,
+    FusedLinearCrossEntropyLoss,
+    cross_entropy,
+    fused_linear_cross_entropy,
+)
 from stackkernels.torch.norm import (
     FusedAddNormFunction,
     LayerNorm,
@@ -54,4 +62,10 @@ __all__ = [
     "RoPE",
     "RoPEFunction",
     "precompute_freqs",
+    "cross_entropy",
+    "CrossEntropyLoss",
+    "CrossEntropyFunction",
+    "fused_linear_cross_entropy",
+    "FusedLinearCrossEntropyLoss",
+    "FusedLinearCrossEntropyFunction",
 ]
