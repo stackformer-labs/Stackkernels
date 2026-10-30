@@ -72,3 +72,25 @@ In our single-pass backward kernel (`_rms_norm_bwd_kernel`):
 
 5. **Saving $R_{\text{std}}$ for Backward**:
    - Saving the 1D tensor of reciprocal standard deviations ($M \times 4$ bytes) avoids recomputing $\text{mean}(x^2)$ during backward pass, saving an entire forward pass computation.
+
+---
+
+## 4. Persistent Grid-Stride Forward Variant
+
+### Motivation
+In standard row-parallel execution, a separate thread block is scheduled for each row $m \in [0, M-1]$. When $M$ is very large (e.g., $M > 4 \times \text{SM count}$) and row length $N$ is small to moderate ($N \le 2048$), launching thousands of transient thread blocks incurs hardware thread block scheduling overhead and suffers from tail-wave imbalance.
+
+### Implementation
+The persistent forward kernel (`_rms_norm_fwd_persistent_kernel`) launches a fixed grid of $2 \times \text{SM count}$ thread blocks. Each persistent block:
+1. Stays resident on its allocated Streaming Multiprocessor (SM).
+2. Preloads the weight vector $W$ once outside the row processing loop into fast registers/SRAM.
+3. Processes multiple rows via grid-stride iteration (`while row_idx < M: ... row_idx += num_programs`).
+
+### Device-Aware Selection Rule
+The optimizer's `pick()` automatically selects `{"variant": "persistent"}` when:
+- Row count $M > 4 \times \text{SM count}$
+- Column dimension $N \le 2048$
+
+### Hardware Performance Assessment
+- **CPU / Local Environment**: Evaluated functionally in CPU simulation; verified zero discrepancy in numerical normalization and variance calculation.
+- **Cloud T4 GPU Validation**: *Pending user validation on cloud T4 GPU instance*. Persistent threads amortize block dispatch latency across large batch dimensions ($B \cdot S \ge 2048$) while keeping SM occupancy uniformly high.

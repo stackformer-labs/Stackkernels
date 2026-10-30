@@ -2,11 +2,21 @@
 
 KERNEL_REV = 1
 
+from typing import Any
+
 import torch
 import triton
 import triton.language as tl
 
-from stackkernels._opt.heuristics._util import determine_num_warps
+
+def _determine_num_warps(block_size: int) -> int:
+    if block_size <= 128:
+        return 1 if block_size <= 64 else 2
+    if block_size <= 512:
+        return 4
+    if block_size <= 2048:
+        return 8
+    return 16
 
 
 @triton.jit
@@ -47,6 +57,48 @@ def _rms_norm_fwd_kernel(
     # Store normalized output
     y_ptrs = Y_ptr + row_idx * stride_y_row + col_offsets
     tl.store(y_ptrs, normed, mask=mask)
+
+
+@triton.jit
+def _rms_norm_fwd_persistent_kernel(
+    X_ptr,
+    Y_ptr,
+    W_ptr,
+    Rstd_ptr,
+    stride_x_row,
+    stride_y_row,
+    M,
+    N,
+    eps,
+    BLOCK_SIZE: tl.constexpr,
+    HAS_WEIGHT: tl.constexpr,
+):
+    """Persistent forward kernel: loops over rows with a fixed grid of SM count * 2 blocks."""
+    pid = tl.program_id(0)
+    num_programs = tl.num_programs(0)
+    col_offsets = tl.arange(0, BLOCK_SIZE)
+    mask = col_offsets < N
+
+    if HAS_WEIGHT:
+        w = tl.load(W_ptr + col_offsets, mask=mask, other=1.0).to(tl.float32)
+
+    row_idx = pid
+    while row_idx < M:
+        x_ptrs = X_ptr + row_idx * stride_x_row + col_offsets
+        x = tl.load(x_ptrs, mask=mask, other=0.0).to(tl.float32)
+
+        variance = tl.sum(x * x, axis=0) / N
+        rstd = 1.0 / tl.sqrt(variance + eps)
+        tl.store(Rstd_ptr + row_idx, rstd)
+
+        normed = x * rstd
+        if HAS_WEIGHT:
+            normed = normed * w
+
+        y_ptrs = Y_ptr + row_idx * stride_y_row + col_offsets
+        tl.store(y_ptrs, normed, mask=mask)
+
+        row_idx += num_programs
 
 
 @triton.jit
@@ -96,29 +148,52 @@ def rms_norm_fwd(
     x: torch.Tensor,
     weight: torch.Tensor | None = None,
     eps: float = 1e-6,
+    config: dict[str, Any] | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor]:
-    """Launch Triton forward kernel for RMSNorm."""
+    """Launch Triton forward kernel for RMSNorm (standard or persistent variant)."""
     M, N = x.shape
     y = torch.empty_like(x)
     rstd = torch.empty((M,), dtype=torch.float32, device=x.device)
 
-    BLOCK_SIZE = triton.next_power_of_2(N)
-    num_warps = determine_num_warps(BLOCK_SIZE)
+    cfg = config or {}
+    BLOCK_SIZE = cfg.get("BLOCK_SIZE", triton.next_power_of_2(N))
+    num_warps = cfg.get("num_warps", _determine_num_warps(BLOCK_SIZE))
+    variant = cfg.get("variant", "default")
 
-    grid = (M,)
-    _rms_norm_fwd_kernel[grid](
-        x,
-        y,
-        weight if weight is not None else x,
-        rstd,
-        x.stride(0),
-        y.stride(0),
-        N,
-        eps,
-        BLOCK_SIZE=BLOCK_SIZE,
-        HAS_WEIGHT=(weight is not None),
-        num_warps=num_warps,
-    )
+    if variant == "persistent":
+        # Launch persistent thread blocks looping over rows
+        sm_count = cfg.get("sm_count", 40)
+        num_programs = min(M, max(1, sm_count * 2))
+        grid = (num_programs,)
+        _rms_norm_fwd_persistent_kernel[grid](
+            x,
+            y,
+            weight if weight is not None else x,
+            rstd,
+            x.stride(0),
+            y.stride(0),
+            M,
+            N,
+            eps,
+            BLOCK_SIZE=BLOCK_SIZE,
+            HAS_WEIGHT=(weight is not None),
+            num_warps=num_warps,
+        )
+    else:
+        grid = (M,)
+        _rms_norm_fwd_kernel[grid](
+            x,
+            y,
+            weight if weight is not None else x,
+            rstd,
+            x.stride(0),
+            y.stride(0),
+            N,
+            eps,
+            BLOCK_SIZE=BLOCK_SIZE,
+            HAS_WEIGHT=(weight is not None),
+            num_warps=num_warps,
+        )
     return y, rstd
 
 
@@ -135,7 +210,7 @@ def rms_norm_bwd(
     dw = torch.zeros_like(weight, dtype=torch.float32) if weight is not None else None
 
     BLOCK_SIZE = triton.next_power_of_2(N)
-    num_warps = determine_num_warps(BLOCK_SIZE)
+    num_warps = _determine_num_warps(BLOCK_SIZE)
 
     grid = (M,)
     _rms_norm_bwd_kernel[grid](

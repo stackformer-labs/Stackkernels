@@ -121,6 +121,30 @@ def pick(
                 if errs:
                     rejections.append((cand, errs))
 
+    # Check persistent thread variant condition for RMSNorm (stretch Task 10)
+    if override is None and op_name in ("rms_norm", "rmsnorm") and chosen_config is not None:
+        import math
+
+        if isinstance(shape, (list, tuple)):
+            if len(shape) >= 2:
+                m_rows = math.prod(shape[:-1])
+                n_cols = shape[-1]
+            elif len(shape) == 1:
+                m_rows = 1
+                n_cols = shape[0]
+            else:
+                m_rows = 1
+                n_cols = 1024
+        elif isinstance(shape, int):
+            m_rows = 1
+            n_cols = shape
+        else:
+            m_rows = 1
+            n_cols = 1024
+
+        if m_rows > (4 * prof.sm_count) and n_cols <= 2048:
+            chosen_config["variant"] = "persistent"
+
     # If explain is not requested, return chosen config directly
     if not explain:
         return chosen_config

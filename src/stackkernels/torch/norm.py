@@ -34,7 +34,14 @@ class RMSNormFunction(torch.autograd.Function):
         if use_triton:
             x_2d, orig_shape = flatten_to_2d(x)
             w_contig = ensure_contiguous(weight) if weight is not None else None
-            y_2d, rstd = rms_norm_fwd(x_2d, w_contig, eps=eps)
+            from stackkernels._opt.pick import pick
+
+            cfg = pick(
+                "rms_norm",
+                shape=x_2d.shape,
+                dtype=str(x.dtype).replace("torch.", ""),
+            )
+            y_2d, rstd = rms_norm_fwd(x_2d, w_contig, eps=eps, config=cfg)
             ctx.orig_shape = orig_shape
             ctx.save_for_backward(x_2d, w_contig, rstd)
             return unflatten_from_2d(y_2d, orig_shape)
