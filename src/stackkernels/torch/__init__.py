@@ -1,5 +1,24 @@
 """PyTorch public API for stackkernels."""
 
+from stackkernels.torch.activation import (
+    ElementwiseFunction,
+    GLUFunction,
+    geglu,
+    gelu,
+    glu,
+    leaky_relu,
+    reglu,
+    relu,
+    sigmoid,
+    silu,
+    swiglu,
+)
+from stackkernels.torch.embedding import (
+    RoPE,
+    RoPEFunction,
+    apply_rope,
+    precompute_freqs,
+)
 from stackkernels.torch.norm import (
     FusedAddNormFunction,
     LayerNorm,
@@ -20,4 +39,19 @@ __all__ = [
     "LayerNormFunction",
     "fused_add_norm",
     "FusedAddNormFunction",
+    "swiglu",
+    "geglu",
+    "reglu",
+    "glu",
+    "gelu",
+    "silu",
+    "relu",
+    "leaky_relu",
+    "sigmoid",
+    "GLUFunction",
+    "ElementwiseFunction",
+    "apply_rope",
+    "RoPE",
+    "RoPEFunction",
+    "precompute_freqs",
 ]
