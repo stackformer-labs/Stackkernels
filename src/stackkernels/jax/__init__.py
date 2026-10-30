@@ -12,6 +12,7 @@ from stackkernels.jax.activation import (
     swiglu,
 )
 from stackkernels.jax.attention import flash_attention, flash_decode
+from stackkernels.jax.dropout import dropout, fused_dropout_add
 from stackkernels.jax.embedding import apply_rope, precompute_freqs
 from stackkernels.jax.loss import cross_entropy, fused_linear_cross_entropy
 from stackkernels.jax.norm import fused_add_norm, layer_norm, rms_norm
@@ -35,4 +36,6 @@ __all__ = [
     "fused_linear_cross_entropy",
     "flash_attention",
     "flash_decode",
+    "dropout",
+    "fused_dropout_add",
 ]

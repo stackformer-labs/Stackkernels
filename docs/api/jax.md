@@ -23,4 +23,6 @@ This page provides the API reference for `stackkernels.jax`, documenting functio
         - fused_linear_cross_entropy
         - flash_attention
         - flash_decode
+        - dropout
+        - fused_dropout_add
 

@@ -124,6 +124,26 @@ def test_stackformer_integration_script():
     assert out.shape == x.shape
 
 
+def test_dropout_docs_example():
+    """Test dropout and fused_dropout_add doc examples on CPU."""
+    from stackkernels.torch import FusedDropoutAdd, dropout, fused_dropout_add
+
+    x = torch.randn(2, 64, 128, requires_grad=True)
+    res = torch.randn(2, 64, 128, requires_grad=True)
+
+    y = dropout(x, p=0.2, training=True, seed=42)
+    y.sum().backward()
+    assert x.grad is not None
+
+    out = fused_dropout_add(x, res, p=0.2, training=True, seed=42)
+    assert out.shape == x.shape
+
+    layer = FusedDropoutAdd(p=0.2)
+    out_layer = layer(x, res)
+    assert out_layer.shape == x.shape
+
+
+
 def test_markdown_relative_links():
     """Verify that all relative markdown links in README.md and docs/ resolve to existing files."""
     repo_root = Path(__file__).resolve().parent.parent

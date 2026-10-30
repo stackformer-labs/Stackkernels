@@ -19,6 +19,14 @@ from stackkernels.torch.attention import (
     flash_attention,
     flash_decode,
 )
+from stackkernels.torch.dropout import (
+    Dropout,
+    DropoutFunction,
+    FusedDropoutAdd,
+    FusedDropoutAddFunction,
+    dropout,
+    fused_dropout_add,
+)
 from stackkernels.torch.embedding import (
     RoPE,
     RoPEFunction,
@@ -78,4 +86,10 @@ __all__ = [
     "flash_decode",
     "FlashAttention",
     "FlashAttentionFunction",
+    "dropout",
+    "Dropout",
+    "DropoutFunction",
+    "fused_dropout_add",
+    "FusedDropoutAdd",
+    "FusedDropoutAddFunction",
 ]

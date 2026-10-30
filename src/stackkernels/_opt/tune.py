@@ -21,6 +21,8 @@ OP_TO_MODULE = {
     "relu": "stackkernels._core.activation.elementwise",
     "glu": "stackkernels._core.activation.glu",
     "swiglu": "stackkernels._core.activation.glu",
+    "dropout": "stackkernels._core.dropout.dropout",
+    "fused_dropout_add": "stackkernels._core.dropout.fused_dropout_add",
     "rope": "stackkernels._core.positional.rope",
     "cross_entropy": "stackkernels._core.loss.cross_entropy",
     "fused_linear_ce": "stackkernels._core.loss.fused_linear_ce",

@@ -57,11 +57,12 @@ The table below reflects the real implementation and validation status of operat
 | `fused_linear_cross_entropy` | Yes | Yes | Yes | Yes | Fused GEMM + CE without materializing logits. |
 | `flash_attention` | Yes | Yes | Yes | Yes | FlashAttention-2 fwd & bwd. MHA, GQA, MQA, causal bottom-right mask. |
 | `flash_decode` | Yes | Yes | No (inf. only) | Yes | Split-KV FlashDecode for single-token generation ($S_q = 1$). |
+| `dropout` | Yes | Yes | Yes | Yes | Low-memory Philox PRNG dropout without saving mask. |
+| `fused_dropout_add` | Yes | Yes | Yes | Yes | Fused dropout + residual addition without extra tensor allocations. |
 
 ### Operations in Development (Not Yet Implemented)
 
 The following operators currently exist as roadmap stubs and are planned for future releases:
-- `dropout` / `fused_dropout_add` (`src/stackkernels/torch/dropout.py`)
 - In-place KV-cache update (`src/stackkernels/torch/cache.py`)
 - Fused Top-K / Top-P sampling (`src/stackkernels/torch/sampling.py`)
 
@@ -304,7 +305,7 @@ stackkernels/
 
 - **Hardware Validation**: Production validation is currently complete for NVIDIA Tesla T4 (sm75). Validation on Ampere (A100) and Hopper (H100) is in progress.
 - **Native BF16**: Requires compute capability sm80 or newer; sm75 (T4) falls back to reference code.
-- **Unimplemented Kernels**: Fused dropout, in-place KV-cache update, and generation sampling are roadmap milestones and exist currently as stubs.
+- **Unimplemented Kernels**: In-place KV-cache update and generation sampling are roadmap milestones and exist currently as stubs.
 
 ---
 

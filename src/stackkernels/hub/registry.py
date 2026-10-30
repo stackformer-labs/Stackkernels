@@ -75,6 +75,14 @@ SUPPORTED_OPS: dict[str, dict[str, str]] = {
         "torch": "stackkernels.torch.attention.flash_decode",
         "jax": "stackkernels.jax.attention.flash_decode",
     },
+    "dropout": {
+        "torch": "stackkernels.torch.dropout.dropout",
+        "jax": "stackkernels.jax.dropout.dropout",
+    },
+    "fused_dropout_add": {
+        "torch": "stackkernels.torch.dropout.fused_dropout_add",
+        "jax": "stackkernels.jax.dropout.fused_dropout_add",
+    },
 }
 
 SUPPORTED_HEAD_DIMS: tuple[int, ...] = (64, 80, 96, 128, 256)

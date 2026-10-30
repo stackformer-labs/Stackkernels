@@ -5,6 +5,7 @@ from typing import Any
 
 from stackkernels._opt.heuristics import (
     cross_entropy,
+    dropout,
     elementwise,
     flash_attn,
     flash_decode,
@@ -29,6 +30,8 @@ OP_HEURISTICS: dict[str, Callable[..., dict[str, Any]]] = {
     "glu": glu.heuristic,
     "swiglu": glu.heuristic,
     "rope": rope.heuristic,
+    "dropout": dropout.heuristic,
+    "fused_dropout_add": dropout.heuristic,
     "cross_entropy": cross_entropy.heuristic,
     "fused_linear_ce": fused_linear_ce.heuristic,
     "fused_linear_cross_entropy": fused_linear_ce.heuristic,

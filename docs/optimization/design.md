@@ -18,7 +18,7 @@ Every kernel in `_core` maps to one of four kernel execution classes based on it
 | `topk_topp` (planned) | `row` | `BLOCK_SIZE`, `num_warps` | Sampling reductions across vocabulary row per token (Roadmap Stub). |
 | `elementwise` | `elementwise` | `BLOCK_SIZE`, `num_warps` | Streaming activations (GELU, SiLU, ReLU, LeakyReLU, Sigmoid). |
 | `glu` | `elementwise` | `BLOCK_SIZE`, `num_warps` | Gated activations (SwiGLU, GeGLU, ReGLU) elementwise fusion. |
-| `dropout` / `fused_dropout_add` (planned) | `elementwise` | `BLOCK_SIZE`, `num_warps` | Random bit-masking and streaming addition (Roadmap Stub). |
+| `dropout` / `fused_dropout_add` | `elementwise` | `BLOCK_SIZE`, `num_warps` | Low-memory Philox PRNG random masking and streaming residual addition. |
 | `kv_update` (planned) | `elementwise` | `BLOCK_SIZE`, `num_warps` | KV-cache slice streaming updates (Roadmap Stub). |
 | `flash_fwd` | `tiled` | `BLOCK_M`, `BLOCK_N`, `num_warps`, `num_stages` | 2D tiled attention with online-softmax in SRAM. |
 | `flash_bwd` | `tiled` | `BLOCK_M`, `BLOCK_N`, `num_warps` | 2D tiled attention backward for dQ and dK/dV. |

@@ -38,4 +38,10 @@ This page provides the API reference for `stackkernels.torch`, documenting all f
         - flash_decode
         - FlashAttention
         - FlashAttentionFunction
+        - dropout
+        - Dropout
+        - DropoutFunction
+        - fused_dropout_add
+        - FusedDropoutAdd
+        - FusedDropoutAddFunction
 
