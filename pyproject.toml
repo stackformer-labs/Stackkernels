@@ -34,3 +34,7 @@ packages = ["src/stackkernels"]
 artifacts = [
     "src/stackkernels/_opt/tuned/*.json",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
