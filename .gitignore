@@ -13,3 +13,4 @@ benchmarks/results/*.png
 benchmarks/results/*.json
 !benchmarks/results/.gitkeep
 Notebooks/*
+site/

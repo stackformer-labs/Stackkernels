@@ -156,7 +156,22 @@ def flash_decode(
 
 
 class FlashAttention(nn.Module):
-    """FlashAttention module with MHA, GQA, and MQA support."""
+    """FlashAttention module with MHA, GQA, and MQA support.
+
+    Computes IO-aware scaled dot-product attention tiling over SRAM to avoid
+    materializing the full intermediate $S_q \\times S_k$ attention matrix.
+
+    Args:
+        is_causal: Whether to apply a bottom-right aligned causal mask. Default: False.
+        sm_scale: Softmax scaling factor. Defaults to $1.0 / \\sqrt{D}$.
+
+    Examples:
+        >>> attn = FlashAttention(is_causal=True)
+        >>> q = torch.randn(2, 8, 1024, 64)
+        >>> k = torch.randn(2, 8, 1024, 64)
+        >>> v = torch.randn(2, 8, 1024, 64)
+        >>> out = attn(q, k, v)
+    """
 
     def __init__(
         self,

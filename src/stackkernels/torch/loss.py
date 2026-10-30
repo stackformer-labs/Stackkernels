@@ -147,7 +147,22 @@ def cross_entropy(
 
 
 class CrossEntropyLoss(nn.Module):
-    """Cross Entropy loss module backed by Triton kernels."""
+    """Cross Entropy loss module backed by Triton kernels.
+
+    Computes cross entropy using an online softmax algorithm to maintain numerical
+    stability while reducing intermediate memory traffic.
+
+    Args:
+        ignore_index: Target index to ignore in loss computation. Default: -100.
+        label_smoothing: Smoothing factor in [0.0, 1.0]. Default: 0.0.
+        reduction: Reduction to apply: "mean", "sum", or "none". Default: "mean".
+
+    Examples:
+        >>> criterion = CrossEntropyLoss()
+        >>> logits = torch.randn(2, 512, 32000)
+        >>> target = torch.randint(0, 32000, (2, 512))
+        >>> loss = criterion(logits, target)
+    """
 
     def __init__(
         self,
@@ -322,7 +337,24 @@ def fused_linear_cross_entropy(
 
 
 class FusedLinearCrossEntropyLoss(nn.Module):
-    """Fused Linear Projection + Cross Entropy loss module."""
+    """Fused Linear Projection + Cross Entropy loss module.
+
+    Fuses the final LM head projection ($x W^T$) directly into the online softmax
+    cross-entropy loss loop, eliminating materialization of the full logits tensor
+    and significantly cutting peak activation memory during training.
+
+    Args:
+        ignore_index: Target index to ignore in loss computation. Default: -100.
+        label_smoothing: Smoothing factor in [0.0, 1.0]. Default: 0.0.
+        reduction: Reduction to apply: "mean", "sum", or "none". Default: "mean".
+
+    Examples:
+        >>> criterion = FusedLinearCrossEntropyLoss()
+        >>> hidden_states = torch.randn(2, 512, 4096)
+        >>> lm_head_weight = torch.randn(32000, 4096)
+        >>> target = torch.randint(0, 32000, (2, 512))
+        >>> loss = criterion(hidden_states, lm_head_weight, target)
+    """
 
     def __init__(
         self,

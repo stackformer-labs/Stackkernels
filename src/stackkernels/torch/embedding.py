@@ -104,7 +104,23 @@ def apply_rope(
 
 
 class RoPE(nn.Module):
-    """Rotary Position Embedding module caching frequency buffers."""
+    """Rotary Position Embedding module caching frequency buffers.
+
+    Precomputes and buffers sinusoidal rotation matrices, applying rotary
+    embeddings to query and key tensors during forward execution.
+
+    Args:
+        dim: Head embedding dimension (must be even).
+        max_seq_len: Maximum sequence length supported by the precomputed table. Default: 4096.
+        base: Exponential base for frequency calculation. Default: 10000.0.
+        device: Target device for precomputed frequency buffers. Default: None.
+
+    Examples:
+        >>> rope = RoPE(dim=64, max_seq_len=2048)
+        >>> q = torch.randn(2, 512, 8, 64)
+        >>> k = torch.randn(2, 512, 2, 64)
+        >>> q_rot, k_rot = rope(q, k)
+    """
 
     def __init__(
         self,

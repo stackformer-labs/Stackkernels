@@ -103,7 +103,23 @@ def rms_norm(
 
 
 class RMSNorm(nn.Module):
-    """Root Mean Square Layer Normalization (RMSNorm) module."""
+    """Root Mean Square Layer Normalization (RMSNorm) module.
+
+    Applies Root Mean Square Normalization over the final dimension:
+        y = (x / RMS(x)) * weight
+
+    Args:
+        dim: Dimension of the normalized features (final dimension).
+        eps: Epsilon constant added for numerical stability. Default: 1e-6.
+        elementwise_affine: Whether to include learnable scale parameter. Default: True.
+        device: Torch device for parameters. Default: None.
+        dtype: Torch dtype for parameters. Default: None.
+
+    Examples:
+        >>> norm = RMSNorm(4096)
+        >>> x = torch.randn(2, 512, 4096)
+        >>> out = norm(x)
+    """
 
     def __init__(
         self,
@@ -228,7 +244,24 @@ def layer_norm(
 
 
 class LayerNorm(nn.Module):
-    """Standard Layer Normalization module."""
+    """Standard Layer Normalization module.
+
+    Applies Layer Normalization over the final dimension:
+        y = ((x - mean) / sqrt(var + eps)) * weight + bias
+
+    Args:
+        normalized_shape: Input shape from an expected input of size (*, normalized_shape).
+        eps: Small constant added for numerical stability. Default: 1e-5.
+        elementwise_affine: Whether to include learnable affine parameters. Default: True.
+        bias: Whether to include a learnable bias term. Default: True.
+        device: Torch device for parameters. Default: None.
+        dtype: Torch dtype for parameters. Default: None.
+
+    Examples:
+        >>> norm = LayerNorm(4096)
+        >>> x = torch.randn(2, 512, 4096)
+        >>> out = norm(x)
+    """
 
     def __init__(
         self,

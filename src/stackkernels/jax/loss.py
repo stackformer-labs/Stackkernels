@@ -15,7 +15,18 @@ def cross_entropy(
     label_smoothing: float = 0.0,
     reduction: Literal["mean", "sum", "none"] = "mean",
 ) -> Any:
-    """Cross entropy loss in JAX with ignore_index and label smoothing."""
+    """Cross entropy loss in JAX with ignore_index and label smoothing.
+
+    Args:
+        logits: Unnormalized log probabilities (*, V).
+        target: Target class indices (*).
+        ignore_index: Target value that is ignored and does not contribute to gradient. Default: -100.
+        label_smoothing: Label smoothing factor in [0.0, 1.0]. Default: 0.0.
+        reduction: Specifies reduction to apply: "mean", "sum", or "none". Default: "mean".
+
+    Returns:
+        Computed loss array.
+    """
     return ref_cross_entropy(
         logits,
         target,
@@ -34,7 +45,20 @@ def fused_linear_cross_entropy(
     label_smoothing: float = 0.0,
     reduction: Literal["mean", "sum", "none"] = "mean",
 ) -> Any:
-    """Fused linear projection + cross entropy in JAX."""
+    """Fused linear projection + cross entropy in JAX.
+
+    Args:
+        x: Input activation array (*, K).
+        weight: Embedding / LM-head weight array (V, K).
+        target: Target class indices (*).
+        bias: Optional bias array (V,). Default: None.
+        ignore_index: Target index to ignore. Default: -100.
+        label_smoothing: Smoothing factor in [0.0, 1.0]. Default: 0.0.
+        reduction: "mean", "sum", or "none". Default: "mean".
+
+    Returns:
+        Computed loss array.
+    """
     return ref_fused_linear_cross_entropy(
         x,
         weight,

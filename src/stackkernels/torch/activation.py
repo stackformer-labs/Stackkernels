@@ -170,19 +170,64 @@ def _split_if_needed(gate: torch.Tensor, up: torch.Tensor | None) -> tuple[torch
 # --- Public Functional API ---
 
 def swiglu(gate: torch.Tensor, up: torch.Tensor | None = None) -> torch.Tensor:
-    """SwiGLU activation: silu(gate) * up."""
+    """SwiGLU activation: silu(gate) * up.
+
+    If `up` is None, `gate` is split into two halves along its last dimension.
+
+    Args:
+        gate: Gating tensor (*, D) or combined tensor (*, 2*D) if up is None.
+        up: Optional up-projection tensor (*, D).
+
+    Returns:
+        Activated tensor (*, D).
+
+    Examples:
+        >>> gate = torch.randn(2, 512, 2048)
+        >>> up = torch.randn(2, 512, 2048)
+        >>> out = swiglu(gate, up)
+    """
     g, u = _split_if_needed(gate, up)
     return GLUFunction.apply(g, u, "silu")
 
 
 def geglu(gate: torch.Tensor, up: torch.Tensor | None = None) -> torch.Tensor:
-    """GeGLU activation: gelu(gate) * up."""
+    """GeGLU activation: gelu(gate) * up (using tanh approximation).
+
+    If `up` is None, `gate` is split into two halves along its last dimension.
+
+    Args:
+        gate: Gating tensor (*, D) or combined tensor (*, 2*D) if up is None.
+        up: Optional up-projection tensor (*, D).
+
+    Returns:
+        Activated tensor (*, D).
+
+    Examples:
+        >>> gate = torch.randn(2, 512, 2048)
+        >>> up = torch.randn(2, 512, 2048)
+        >>> out = geglu(gate, up)
+    """
     g, u = _split_if_needed(gate, up)
     return GLUFunction.apply(g, u, "gelu")
 
 
 def reglu(gate: torch.Tensor, up: torch.Tensor | None = None) -> torch.Tensor:
-    """ReGLU activation: relu(gate) * up."""
+    """ReGLU activation: relu(gate) * up.
+
+    If `up` is None, `gate` is split into two halves along its last dimension.
+
+    Args:
+        gate: Gating tensor (*, D) or combined tensor (*, 2*D) if up is None.
+        up: Optional up-projection tensor (*, D).
+
+    Returns:
+        Activated tensor (*, D).
+
+    Examples:
+        >>> gate = torch.randn(2, 512, 2048)
+        >>> up = torch.randn(2, 512, 2048)
+        >>> out = reglu(gate, up)
+    """
     g, u = _split_if_needed(gate, up)
     return GLUFunction.apply(g, u, "relu")
 
@@ -192,33 +237,79 @@ def glu(
     up: torch.Tensor | None = None,
     act: Literal["silu", "gelu", "relu"] = "silu",
 ) -> torch.Tensor:
-    """General Gated Linear Unit dispatcher."""
+    """General Gated Linear Unit dispatcher.
+
+    Args:
+        gate: Gating tensor (*, D) or combined tensor (*, 2*D) if up is None.
+        up: Optional up-projection tensor (*, D).
+        act: Activation function to apply to gate: "silu", "gelu", or "relu".
+
+    Returns:
+        Activated tensor (*, D).
+    """
     g, u = _split_if_needed(gate, up)
     return GLUFunction.apply(g, u, act)
 
 
 def gelu(x: torch.Tensor, approximate: Literal["none", "tanh"] = "none") -> torch.Tensor:
-    """Gaussian Error Linear Unit (GELU)."""
+    """Gaussian Error Linear Unit (GELU).
+
+    Args:
+        x: Input tensor (*, D).
+        approximate: Approximation algorithm, either "none" (exact erf) or "tanh".
+
+    Returns:
+        Activated tensor with identical shape and dtype.
+    """
     return ElementwiseFunction.apply(x, "gelu", approximate, 0.0)
 
 
 def silu(x: torch.Tensor) -> torch.Tensor:
-    """Sigmoid Linear Unit (SiLU / Swish)."""
+    """Sigmoid Linear Unit (SiLU / Swish): x * sigmoid(x).
+
+    Args:
+        x: Input tensor (*, D).
+
+    Returns:
+        Activated tensor with identical shape and dtype.
+    """
     return ElementwiseFunction.apply(x, "silu", "none", 0.0)
 
 
 def relu(x: torch.Tensor) -> torch.Tensor:
-    """Rectified Linear Unit (ReLU)."""
+    """Rectified Linear Unit (ReLU): max(0, x).
+
+    Args:
+        x: Input tensor (*, D).
+
+    Returns:
+        Activated tensor with identical shape and dtype.
+    """
     return ElementwiseFunction.apply(x, "relu", "none", 0.0)
 
 
 def leaky_relu(x: torch.Tensor, negative_slope: float = 0.01) -> torch.Tensor:
-    """Leaky ReLU."""
+    """Leaky Rectified Linear Unit: max(x, x * negative_slope).
+
+    Args:
+        x: Input tensor (*, D).
+        negative_slope: Slope for negative values. Default: 0.01.
+
+    Returns:
+        Activated tensor with identical shape and dtype.
+    """
     return ElementwiseFunction.apply(x, "leaky_relu", "none", negative_slope)
 
 
 def sigmoid(x: torch.Tensor) -> torch.Tensor:
-    """Sigmoid activation."""
+    """Sigmoid activation: 1 / (1 + exp(-x)).
+
+    Args:
+        x: Input tensor (*, D).
+
+    Returns:
+        Activated tensor with identical shape and dtype.
+    """
     return ElementwiseFunction.apply(x, "sigmoid", "none", 0.0)
 
 

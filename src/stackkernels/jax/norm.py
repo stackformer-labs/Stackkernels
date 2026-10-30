@@ -14,7 +14,16 @@ def rms_norm(
     weight: Any | None = None,
     eps: float = 1e-6,
 ) -> Any:
-    """Root Mean Square Normalization for JAX with custom_vjp."""
+    """Root Mean Square Normalization for JAX with custom_vjp.
+
+    Args:
+        x: Input array of shape (*, D).
+        weight: Optional learnable scale array of shape (D,).
+        eps: Small constant added for numerical stability. Default: 1e-6.
+
+    Returns:
+        Normalized array matching shape and dtype of x.
+    """
     import jax
     import jax.numpy as jnp
 
@@ -60,7 +69,17 @@ def layer_norm(
     bias: Any | None = None,
     eps: float = 1e-5,
 ) -> Any:
-    """Layer Normalization for JAX with custom_vjp."""
+    """Layer Normalization for JAX with custom_vjp.
+
+    Args:
+        x: Input array of shape (*, D).
+        weight: Optional scale array of shape (D,).
+        bias: Optional bias array of shape (D,).
+        eps: Small constant added for numerical stability. Default: 1e-5.
+
+    Returns:
+        Normalized array matching shape and dtype of x.
+    """
     import jax
     import jax.numpy as jnp
 
@@ -120,7 +139,19 @@ def fused_add_norm(
     eps: float = 1e-6,
     norm_type: Literal["rms_norm", "layer_norm"] = "rms_norm",
 ) -> tuple[Any, Any]:
-    """Fused residual addition and normalization for JAX."""
+    """Fused residual addition and normalization for JAX.
+
+    Args:
+        x: Input array of shape (*, D).
+        residual: Residual array of shape (*, D).
+        weight: Optional scale array of shape (D,).
+        bias: Optional bias array of shape (D,).
+        eps: Small constant added for numerical stability. Default: 1e-6.
+        norm_type: Normalization type ("rms_norm" or "layer_norm"). Default: "rms_norm".
+
+    Returns:
+        Tuple of (normalized_output, residual_output).
+    """
     return ref_fused_add_norm(x, residual, weight=weight, bias=bias, eps=eps, norm_type=norm_type)
 
 
