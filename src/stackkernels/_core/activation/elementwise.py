@@ -1,5 +1,7 @@
 """Elementwise activation kernels (GELU, SiLU, ReLU, LeakyReLU, Sigmoid) in Triton."""
 
+KERNEL_REV = 1
+
 from typing import Literal
 
 import torch

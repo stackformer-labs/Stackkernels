@@ -1,2 +1,3 @@
-"""write new K and V into the static KV cache"""
+"""kv cache in-place update kernel (later)"""
 
+KERNEL_REV = 1

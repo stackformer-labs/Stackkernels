@@ -1,5 +1,7 @@
 """Split-KV FlashDecode kernel for q_len = 1 with arbitrary cache lengths."""
 
+KERNEL_REV = 1
+
 import math
 import torch
 import triton

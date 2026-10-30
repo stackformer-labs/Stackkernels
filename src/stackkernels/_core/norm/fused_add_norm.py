@@ -1,5 +1,7 @@
 """Fused residual add + normalization (RMSNorm / LayerNorm) forward and single-pass backward kernels."""
 
+KERNEL_REV = 1
+
 from typing import Literal
 
 import torch

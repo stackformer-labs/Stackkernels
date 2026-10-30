@@ -1,5 +1,7 @@
 """Prefill forward kernel: MHA/GQA/MQA, causal (bottom-right aligned) or non-causal, saves LSE."""
 
+KERNEL_REV = 1
+
 import math
 import torch
 import triton

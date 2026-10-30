@@ -4,6 +4,8 @@ Avoids materializing the full (M, V) logits tensor in global memory by chunking
 over the token (M) dimension during forward and backward.
 """
 
+KERNEL_REV = 1
+
 from typing import Literal
 
 import torch

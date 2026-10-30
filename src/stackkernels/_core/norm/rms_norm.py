@@ -1,5 +1,7 @@
 """RMSNorm forward and backward kernels in Triton."""
 
+KERNEL_REV = 1
+
 import torch
 import triton
 import triton.language as tl

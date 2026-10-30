@@ -1,5 +1,7 @@
 """Cross entropy loss forward and single-pass backward kernels in Triton."""
 
+KERNEL_REV = 1
+
 from typing import Literal
 
 import torch

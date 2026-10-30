@@ -1,5 +1,7 @@
 """SwiGLU, GeGLU, ReGLU fused forward and backward kernels in Triton."""
 
+KERNEL_REV = 1
+
 from typing import Literal
 
 import torch

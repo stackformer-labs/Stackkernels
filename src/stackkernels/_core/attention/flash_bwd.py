@@ -1,5 +1,7 @@
 """Backward kernel for Flash Attention: computes dQ, dK, dV with MHA, GQA, and MQA support."""
 
+KERNEL_REV = 1
+
 import math
 import torch
 import triton
