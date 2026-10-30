@@ -55,7 +55,7 @@ def _cross_entropy_fwd_kernel(
     tl.store(Lse_ptr + row_idx, lse)
 
     # 2. Compute loss for this row
-    if target == ignore_index or target < 0 or target >= V:
+    if target == ignore_index:
         tl.store(Loss_ptr + row_idx, 0.0)
     else:
         # Load the logit for the target class
@@ -84,7 +84,6 @@ def _cross_entropy_bwd_kernel(
     stride_logits_v,
     stride_dlogits_m,
     stride_dlogits_v,
-    stride_dloss_m,
     M,
     V,
     ignore_index,
@@ -95,7 +94,7 @@ def _cross_entropy_bwd_kernel(
     row_idx = tl.program_id(0)
     target = tl.load(Target_ptr + row_idx)
 
-    if target == ignore_index or target < 0 or target >= V:
+    if target == ignore_index:
         # Zero gradients for ignored targets
         for v_start in range(0, V, BLOCK_V):
             v_offsets = v_start + tl.arange(0, BLOCK_V)
@@ -108,7 +107,7 @@ def _cross_entropy_bwd_kernel(
         return
 
     lse = tl.load(Lse_ptr + row_idx).to(tl.float32)
-    dy = tl.load(dLoss_ptr + row_idx * stride_dloss_m).to(tl.float32) * scale_grad
+    dy = tl.load(dLoss_ptr + row_idx).to(tl.float32) * scale_grad
     smooth_prob = label_smoothing / V
 
     for v_start in range(0, V, BLOCK_V):
@@ -195,8 +194,6 @@ def cross_entropy_bwd(
     num_warps = determine_num_warps(BLOCK_V)
     grid = (M,)
 
-    stride_dloss_m = dloss.stride(0) if (dloss.dim() > 0 and dloss.numel() > 1) else 0
-
     _cross_entropy_bwd_kernel[grid](
         dloss,
         logits,
@@ -207,7 +204,6 @@ def cross_entropy_bwd(
         logits.stride(1),
         dlogits.stride(0),
         dlogits.stride(1),
-        stride_dloss_m,
         M,
         V,
         ignore_index,

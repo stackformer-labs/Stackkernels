@@ -29,3 +29,4 @@ def heuristic(shape: int | tuple | None = None, **kwargs) -> dict:
 
 
 __all__ = ["heuristic"]
+

@@ -11,6 +11,7 @@ from stackkernels._reference.torch.activation import (
     silu,
     swiglu,
 )
+from stackkernels._reference.torch.attention import attention_reference, repeat_kv
 from stackkernels._reference.torch.loss import cross_entropy, fused_linear_cross_entropy
 from stackkernels._reference.torch.norm import fused_add_norm, layer_norm, rms_norm
 from stackkernels._reference.torch.rope import apply_rope, precompute_freqs
@@ -32,4 +33,6 @@ __all__ = [
     "precompute_freqs",
     "cross_entropy",
     "fused_linear_cross_entropy",
+    "attention_reference",
+    "repeat_kv",
 ]

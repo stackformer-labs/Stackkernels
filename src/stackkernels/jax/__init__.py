@@ -11,6 +11,7 @@ from stackkernels.jax.activation import (
     silu,
     swiglu,
 )
+from stackkernels.jax.attention import flash_attention, flash_decode
 from stackkernels.jax.embedding import apply_rope, precompute_freqs
 from stackkernels.jax.loss import cross_entropy, fused_linear_cross_entropy
 from stackkernels.jax.norm import fused_add_norm, layer_norm, rms_norm
@@ -32,4 +33,6 @@ __all__ = [
     "precompute_freqs",
     "cross_entropy",
     "fused_linear_cross_entropy",
+    "flash_attention",
+    "flash_decode",
 ]

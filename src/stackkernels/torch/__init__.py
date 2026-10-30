@@ -13,6 +13,12 @@ from stackkernels.torch.activation import (
     silu,
     swiglu,
 )
+from stackkernels.torch.attention import (
+    FlashAttention,
+    FlashAttentionFunction,
+    flash_attention,
+    flash_decode,
+)
 from stackkernels.torch.embedding import (
     RoPE,
     RoPEFunction,
@@ -68,4 +74,8 @@ __all__ = [
     "fused_linear_cross_entropy",
     "FusedLinearCrossEntropyLoss",
     "FusedLinearCrossEntropyFunction",
+    "flash_attention",
+    "flash_decode",
+    "FlashAttention",
+    "FlashAttentionFunction",
 ]
