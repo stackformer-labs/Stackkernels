@@ -19,16 +19,21 @@ torch = [
 ]
 jax = [
     "jax>=0.4",
-    "jax-triton",
 ]
 dev = [
-    "pytest",
+    "pytest>=7.0",
     "pytest-benchmark",
+    "torch>=2.3,<3.0",
+    "jax>=0.4",
 ]
 docs = [
     "mkdocs>=1.6.0",
     "mkdocs-material>=9.5.0",
     "mkdocstrings[python]>=0.25.0",
+]
+all = [
+    "torch>=2.3,<3.0",
+    "jax>=0.4",
 ]
 
 [project.urls]

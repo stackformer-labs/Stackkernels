@@ -2,7 +2,10 @@
 
 # StackKernels
 
-<!-- Logo placeholder: Place project logo at assets/logo.png -->
+<p align="center">
+  <img src="assets/logo-light.png#gh-light-mode-only" width="480" alt="StackKernels">
+  <img src="assets/logo-dark.png#gh-dark-mode-only" width="480" alt="StackKernels">
+</p>
 
 [![PyPI version](https://img.shields.io/pypi/v/stackkernels.svg)](https://pypi.org/project/stackkernels/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
