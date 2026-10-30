@@ -1,7 +1,5 @@
-<div align="center">
-
 # StackKernels
-
+<div align="center">
 <p align="center">
   <img src="assets/logo-light.png#gh-light-mode-only" width="480" alt="StackKernels">
   <img src="assets/logo-dark.png#gh-dark-mode-only" width="480" alt="StackKernels">
