@@ -1,21 +1,21 @@
-<div align="center">
-
-# StackKernels
-
 <p align="center">
-  <img src="assets/logo-light.png#gh-light-mode-only" width="480" alt="StackKernels">
-  <img src="assets/logo-dark.png#gh-dark-mode-only" width="480" alt="StackKernels">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
+    <img src="assets/logo-light.png" alt="StackKernels logo" width="560">
+  </picture>
+</p>
+<p align="center">
+  <a href="https://pypi.org/project/stackkernels/"><img src="https://img.shields.io/pypi/v/stackkernels.svg" alt="PyPI version" /></a>
+  <a href="https://pypi.org/project/stackkernels/"><img src="https://img.shields.io/pypi/pyversions/stackkernels.svg" alt="Python versions" /></a>
+  <a href="https://github.com/stackformer-labs/stackkernels/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" /></a>
+  <a href="https://github.com/stackformer-labs/stackkernels/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/stackformer-labs/stackkernels/test.yml?branch=main&label=CI" alt="CI status" />
+  </a>
 </p>
 
-[![PyPI version](https://img.shields.io/pypi/v/stackkernels.svg)](https://pypi.org/project/stackkernels/)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/stackformer-labs/stackkernels/actions/workflows/test.yml/badge.svg)](https://github.com/stackformer-labs/stackkernels/actions/workflows/test.yml)
-[![Docs](https://github.com/stackformer-labs/stackkernels/actions/workflows/docs.yml/badge.svg)](https://github.com/stackformer-labs/stackkernels/actions/workflows/docs.yml)
-
+# StackKernels
+ 
 **Fast, fused Triton kernels for transformer models — PyTorch and JAX backends.**
-
-</div>
 
 ---
 
